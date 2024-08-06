@@ -1,0 +1,368 @@
+importar  pandas  como  pd 
+importar  matplotlib.pyplot  como  plt 
+importar  seaborn  como  sns 
+importar  solicitações 
+de  io  importar  StringIO 
+importar  aleatório
+
+def  carregar_dados ( url ,  tipo_arquivo = 'CSV' ): 
+    tente : 
+        if  'drive.google.com'  na  url : 
+            # Extrair ID do arquivo da URL do Google Drive 
+            file_id  =  url . split ( '/' )[ - 2 ] 
+            # Construa a URL de download 
+            download_url  =  f "https://drive.google.com/uc?id= { file_id } " 
+            # Faça o download do conteúdo do arquivo 
+            response  =  requests . obter ( url_download ) . content 
+            # Ler os dados a partir do conteúdo baixado 
+            df  =  pd . read_csv ( StringIO ( resposta . decodificar ( 'utf-8' ))) 
+        else : 
+            df  =  pd . read_csv ( url ) 
+        return  df 
+    except  Exception  as  e : 
+        print ( f "Erro ao carregar os dados: { e } " ) 
+        return  None
+
+def  analise_exploratoria ( df ): 
+    print ( "Primeiras linhas do DataFrame:" ) 
+    print ( df . head ())
+    
+    print ( " \n Informações sobre o DataFrame:" ) 
+    print ( df . info ())
+    
+    print ( " \n Estatísticas descritivas das variáveis ​​numéricas:" ) 
+    print ( df.describe ( ))
+    
+    # Plotar histograma 
+    plot_histograma ( df )
+    
+    # Plotar gráficos de barras 
+    plot_grafico_de_barras ( df )
+    
+    # Plotar gráfico de pizza 
+    plot_grafico_de_pizza ( df )
+    
+    # Plotar gráfico de linha 
+    plot_grafico_de_linha ( df )
+    
+    # Plotar gráfico de dispersão 
+    plot_grafico_de_dispersao ( df )
+    
+    # Desenhar boxplot 
+    plot_boxplot ( df )
+    
+    # Plotar matriz de brilho 
+    identificacao_correlacoes ( df )
+
+def  plot_histograma ( df ): 
+    print ( " \n Histograma:" ) 
+    colunas_numéricas  =  df . select_dtypes ( include = [ 'float64' ,  'int64' ]) . colunas 
+    se  len ( numeric_columns )  >  0 : 
+        sns . histplot ( data = df ,  x = random . escolha ( numeric_columns ),  kde = True ) 
+        plt . título ( 'Histograma' ) 
+        plt . show () 
+    else : 
+        print ( "Não há variáveis ​​numéricas para plotar o histograma." )
+
+def plot_grafico_de_barras(df):
+    print("\nGráfico de Barras:")
+    categorical_columns = df.select_dtypes(include=['object']).columns
+    if len(categorical_columns) > 0:
+        col = random.choice(categorical_columns)
+        if df[col].nunique() > 0:  # Verificar se há dados únicos para plotar
+            sns.countplot(data=df, x=col)
+            plt.title('Gráfico de Barras')
+            plt.show()
+        else:
+            print(f"Não há dados únicos para a variável '{col}' para plotar o gráfico de barras.")
+    else:
+        print("Não há variáveis categóricas para plotar o gráfico de barras.")
+
+def plot_grafico_de_pizza(df):
+    print("\nGráfico de Pizza:")
+    categorical_columns = df.select_dtypes(include=['object']).columns
+    if len(categorical_columns) > 0:
+        col = random.choice(categorical_columns)
+        if df[col].nunique() > 0:  # Verificar se há dados únicos para plotar
+            counts = df[col].value_counts()
+            if counts.max() == 1:  # Verificar se não há valores duplicados
+                plt.pie(counts, labels=counts.index, autopct='%1.1f%%')
+                plt.title('Gráfico de Pizza')
+                plt.show()
+            else:
+                print(f"A variável '{col}' possui valores duplicados e não pode ser plotada no gráfico de pizza.")
+        else:
+            print(f"Não há dados únicos para a variável '{col}' para plotar o gráfico de pizza.")
+    else:
+        print("Não há variáveis categóricas para plotar o gráfico de pizza.")
+
+def plot_grafico_de_linha(df):
+    print("\nGráfico de Linha:")
+    numeric_columns = df.select_dtypes(include=['float64', 'int64']).columns
+    if len(numeric_columns) > 1:
+        cols = random.sample(list(numeric_columns), 2)
+        df[cols].plot()
+        plt.title('Gráfico de Linha')
+        plt.xlabel(cols[0])
+        plt.ylabel(cols[1])
+        plt.show()
+    else:
+        print("Não há duas variáveis numéricas para plotar o gráfico de linha.")
+
+def plot_grafico_de_dispersao(df):
+    print("\nGráfico de Dispersão:")
+    numeric_columns = df.select_dtypes(include=['float64', 'int64']).columns
+    if len(numeric_columns) > 1:
+        cols = random.sample(list(numeric_columns), 2)
+        sns.scatterplot(data=df, x=cols[0], y=cols[1])
+        plt.title('Gráfico de Dispersão')
+        plt.xlabel(cols[0])
+        plt.ylabel(cols[1])
+        plt.show()
+    else:
+        print("Não há duas variáveis numéricas para plotar o gráfico de dispersão.")
+
+def plot_boxplot(df):
+    print("\nBoxplot:")
+    numeric_columns = df.select_dtypes(include=['float64', 'int64']).columns
+    if len(numeric_columns) > 0:
+        sns.boxplot(data=df[numeric_columns])
+        plt.title('Boxplot')
+        plt.show()
+    else:
+        print("Não há variáveis numéricas para plotar o boxplot.")
+
+def identificacao_correlacoes(df):
+    print("\nMatriz de Correlação:")
+    numeric_columns = df.select_dtypes(include=['float64', 'int64']).columns
+    if len(numeric_columns) > 1:
+        sns.heatmap(df[numeric_columns].corr(), annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
+        plt.title('Matriz de Correlação')
+        plt.show()
+    else:
+        print("Não há correlações a serem identificadas com menos de duas variáveis numéricas.")
+
+def analise_especialista():
+    # Aqui você pode adicionar sua análise especializada
+    print("\nAnálise especializada:")
+    print("Essa é a análise especializada do assunto.")
+    print("Você pode adicionar suas próprias conclusões e insights aqui.")
+
+def main(urls):
+    for url in urls:
+        df = carregar_dados(url)
+        if df is not None:
+            print("\nAnálise exploratória para o arquivo:", url)
+            analise_exploratoria(df)
+            print("\n---")
+
+    # Após a análise exploratória, realizamos uma análise especializada
+    analise_especialista()
+
+# URLs dos arquivos de dados
+urls = [
+    "https://drive.google.com/file/d/17G5y-PSL1aGGaL7lnhpFZohLASy55SMT/view?usp=drive_link"
+   
+    # Adicione mais URLs aqui...
+]
+
+# Executar a análise de dados
+main(urls)
+Análise exploratória para o arquivo: https://drive.google.com/file/d/17G5y-PSL1aGGaL7lnhpFZohLASy55SMT/view?usp=drive_link
+Primeiras linhas do DataFrame:
+   Report Id  Start date    End date Filing date  \
+0          2  2017-04-29  2017-10-28  2017-11-07   
+1          3  2017-05-01  2017-10-31  2017-11-08   
+2          4  2017-04-15  2017-10-14  2017-11-08   
+3          5  2017-04-15  2017-10-14  2017-11-08   
+4          6  2017-04-15  2017-10-14  2017-11-08   
+
+                                Company Company number  \
+0                     MEDTRONIC LIMITED       01070807   
+1  SEBDEN STEEL SERVICE CENTRES LIMITED       02553464   
+2           GREENERGY FLEXIGRID LIMITED       07581532   
+3               GREENERGY FUELS LIMITED       04058825   
+4       GREENERGY INTERNATIONAL LIMITED       02809935   
+
+  Payments made in the reporting period  Average time to pay  \
+0                                   NaN                 25.0   
+1                                   NaN                 69.0   
+2                                   NaN                 21.0   
+3                                   NaN                 14.0   
+4                                   NaN                 15.0   
+
+   % Invoices paid within 30 days  % Invoices paid between 31 and 60 days  \
+0                            77.0                                    20.0   
+1                             7.0                                    28.0   
+2                            89.0                                     9.0   
+3                            90.0                                     8.0   
+4                            96.0                                     2.0   
+
+   ...  Longest standard payment period  Maximum contractual payment period  \
+0  ...                             60.0                                60.0   
+1  ...                              NaN                                75.0   
+2  ...                             30.0                                30.0   
+3  ...                             30.0                                30.0   
+4  ...                             30.0                                30.0   
+
+   Payment terms have changed  Suppliers notified of changes  \
+0                       False                            NaN   
+1                       False                            NaN   
+2                       False                            NaN   
+3                       False                            NaN   
+4                       False                            NaN   
+
+   Participates in payment codes E-Invoicing offered  \
+0                          False                True   
+1                          False               False   
+2                          False               False   
+3                          False               False   
+4                          False               False   
+
+  Supply-chain financing offered  \
+0                          False   
+1                          False   
+2                          False   
+3                          False   
+4                          False   
+
+   Policy covers charges for remaining on supplier list  \
+0                                              False      
+1                                              False      
+2                                               True      
+3                                               True      
+4                                               True      
+
+  Charges have been made for remaining on supplier list  \
+0                                              False      
+1                                              False      
+2                                               True      
+3                                               True      
+4                                              False      
+
+                                                 URL  
+0  https://check-payment-practices.service.gov.uk...  
+1  https://check-payment-practices.service.gov.uk...  
+2  https://check-payment-practices.service.gov.uk...  
+3  https://check-payment-practices.service.gov.uk...  
+4  https://check-payment-practices.service.gov.uk...  
+
+[5 rows x 23 columns]
+
+Informações sobre o DataFrame:
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 24225 entries, 0 to 24224
+Data columns (total 23 columns):
+ #   Column                                                 Non-Null Count  Dtype  
+---  ------                                                 --------------  -----  
+ 0   Report Id                                              24225 non-null  int64  
+ 1   Start date                                             24225 non-null  object 
+ 2   End date                                               24225 non-null  object 
+ 3   Filing date                                            24225 non-null  object 
+ 4   Company                                                24225 non-null  object 
+ 5   Company number                                         24225 non-null  object 
+ 6   Payments made in the reporting period                  13844 non-null  object 
+ 7   Average time to pay                                    21777 non-null  float64
+ 8   % Invoices paid within 30 days                         21777 non-null  float64
+ 9   % Invoices paid between 31 and 60 days                 21777 non-null  float64
+ 10  % Invoices paid later than 60 days                     21777 non-null  float64
+ 11  % Invoices not paid within agreed terms                21820 non-null  float64
+ 12  Shortest (or only) standard payment period             21820 non-null  float64
+ 13  Longest standard payment period                        14306 non-null  float64
+ 14  Maximum contractual payment period                     21820 non-null  float64
+ 15  Payment terms have changed                             21820 non-null  object 
+ 16  Suppliers notified of changes                          541 non-null    object 
+ 17  Participates in payment codes                          24225 non-null  bool   
+ 18  E-Invoicing offered                                    21820 non-null  object 
+ 19  Supply-chain financing offered                         21820 non-null  object 
+ 20  Policy covers charges for remaining on supplier list   21820 non-null  object 
+ 21  Charges have been made for remaining on supplier list  21820 non-null  object 
+ 22  URL                                                    24225 non-null  object 
+dtypes: bool(1), float64(8), int64(1), object(13)
+memory usage: 4.1+ MB
+None
+
+Estatísticas descritivas das variáveis numéricas:
+          Report Id  Average time to pay  % Invoices paid within 30 days  \
+count  24225.000000         21777.000000                    21777.000000   
+mean   12436.194716            37.264729                       53.937227   
+std     7163.162769            25.752755                       28.367552   
+min        2.000000             0.000000                        0.000000   
+25%     6233.000000            25.000000                       30.000000   
+50%    12437.000000            35.000000                       55.000000   
+75%    18642.000000            46.000000                       78.000000   
+max    24815.000000          1000.000000                      100.000000   
+
+       % Invoices paid between 31 and 60 days  \
+count                            21777.000000   
+mean                                31.614685   
+std                                 20.689184   
+min                                  0.000000   
+25%                                 15.000000   
+50%                                 30.000000   
+75%                                 46.000000   
+max                                100.000000   
+
+       % Invoices paid later than 60 days  \
+count                        21777.000000   
+mean                            14.438720   
+std                             16.928715   
+min                              0.000000   
+25%                              3.000000   
+50%                              8.000000   
+75%                             19.000000   
+max                            100.000000   
+
+       % Invoices not paid within agreed terms  \
+count                             21820.000000   
+mean                                 29.964299   
+std                                  24.561164   
+min                                   0.000000   
+25%                                  10.000000   
+50%                                  24.500000   
+75%                                  45.000000   
+max                                 100.000000   
+
+       Shortest (or only) standard payment period  \
+count                                21820.000000   
+mean                                    21.336709   
+std                                     25.709637   
+min                                      0.000000   
+25%                                      1.000000   
+50%                                     20.000000   
+75%                                     30.000000   
+max                                   1000.000000   
+
+       Longest standard payment period  Maximum contractual payment period  
+count                     14306.000000                        21820.000000  
+mean                         70.432056                           75.190376  
+std                          44.956332                          101.612130  
+min                           1.000000                            0.000000  
+25%                          60.000000                           45.000000  
+50%                          60.000000                           60.000000  
+75%                          90.000000                           90.000000  
+max                        1264.000000                         5475.000000  
+
+Histograma:
+/opt/conda/envs/anaconda-2024.02-py310/lib/python3.10/site-packages/seaborn/_oldcore.py:1119: FutureWarning: use_inf_as_na option is deprecated and will be removed in a future version. Convert inf values to NaN before operating instead.
+  with pd.option_context('mode.use_inf_as_na', True):
+No description has been provided for this image
+Gráfico de Barras:
+No description has been provided for this image
+Gráfico de Pizza:
+A variável 'Company number' possui valores duplicados e não pode ser plotada no gráfico de pizza.
+
+Gráfico de Linha:
+No description has been provided for this image
+Gráfico de Dispersão:
+No description has been provided for this image
+Boxplot:
+No description has been provided for this image
+Matriz de Correlação:
+No description has been provided for this image
+---
+
+Análise especializada:
+Essa é a análise especializada do assunto.
+Você pode adicionar suas próprias conclusões e insights aqui.
+ 
